@@ -11,3 +11,6 @@ Gaberiel
 Rudeus Greyrat
 Alfredo
 Trombone
+
+
+Having things mentioned doesn't work very well, same with generes
