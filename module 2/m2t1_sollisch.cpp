@@ -13,5 +13,10 @@ int main()
     cin >> customer_name;
     cout << "Nice to meet you, " << customer_name << " welcome to the " << farm_name << " farm!" << endl;
 
+    cout << "How many apples do you want? ";
+    cin >> apples_to_buy;
+    double customer_cost = apples_to_buy * APPLEPRICE;
+    cout << "For " << apples_to_buy << " your total is $" << customer_cost << endl;
+
     return 0;
 }
