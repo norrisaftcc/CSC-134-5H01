@@ -27,6 +27,7 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
+    #define GRID_SIZE 20  // Each grid cell is 20 pixels
     const int screenWidth = 800;
     const int screenHeight = 600;
 
@@ -40,10 +41,12 @@ int main(void)
 
     SetTargetFPS(60);               // Set desired framerate (frames-per-second)
     //--------------------------------------------------------------------------------------
-    int player_x = 360;
-    int player_y = 250;
-    int speed_x = 4;
-    int speed_y = 4;
+    int player_x = (screenWidth / 2 / GRID_SIZE) * GRID_SIZE;
+    int player_y = (screenHeight / 2 / GRID_SIZE) * GRID_SIZE;
+    int speed = 4;
+    int speed_x = speed;  // Start moving right, for example
+    int speed_y = 0;
+    
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -71,7 +74,7 @@ int main(void)
                 // Press enter to change to GAMEPLAY screen
                 if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
                 {
-                    currentScreen = GAMEPLAY;
+                            currentScreen = GAMEPLAY;
                 }
             } break;
             case GAMEPLAY:
@@ -126,22 +129,34 @@ int main(void)
                     // TODO: Draw GAMEPLAY screen here!
                     DrawRectangle(0, 0, screenWidth, screenHeight, PURPLE);
                     DrawText("SNAKE GAMEPLAY SCREEN", 20, 20, 40, MAROON);
-                    DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
                     
                     DrawRectangle(200, 200, 50,50, BLUE);
                     
-                    if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)){
-                        player_x = player_x - speed_x;
+
+                    if (currentScreen == GAMEPLAY) {
+                        // Movement handling - only change direction when fully on a grid cell
+                        if ((player_x % GRID_SIZE == 0) && (player_y % GRID_SIZE == 0)) {
+                            if ((IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) && speed_x == 0) {
+                                speed_x = -speed;
+                                speed_y = 0;
+                            } else if ((IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) && speed_x == 0) {
+                                speed_x = speed;
+                                speed_y = 0;
+                            } else if ((IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) && speed_y == 0) {
+                                speed_x = 0;
+                                
+                                speed_y = -speed;
+                            } else if ((IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) && speed_y == 0) {
+                                speed_x = 0;
+                                speed_y = speed;
+                            }
+                        }
                     }
-                    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)){
-                        player_y = player_y - speed_y;
-                    }
-                    if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)){
-                        player_x = player_x + speed_x;
-                    }
-                    if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)){
-                        player_y = player_y + speed_y;
-                    }
+                        
+                        // Move the snake continuously
+                        player_x += speed_x;
+                        player_y += speed_y;
+
 
                     DrawRectangle(player_x,player_y,50,50, GREEN);
 
