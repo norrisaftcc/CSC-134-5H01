@@ -13,20 +13,47 @@
 using namespace std;
 
 int main() {
-    const int SIDES = 69420; // yours will differ!
-    int seed = 35860;
-    //int seed = time(0);
+    int sides;
+    cout << "How many sides are on the dice: ";
+    cin >> sides;
+    
+     // yours will differ!
+    //int seed = 35860;
+    int seed = time(0);
     // seed the random number generator
     srand(seed);
     // rand() is a large number, so we take the remainder which is %
-    int roll;
-    // roll a few times
-    roll = ( (rand() % SIDES)+1 );
-    cout << roll << endl;
+    int rolls, average, total = 0, diceRolls;
+    cout << "How many rolls do you want: ";
+    cin >> rolls;
+    cout << " " << endl;
+    
+    int highestRoll = 0;
+    int lowestRoll = sides;
+    int i = 1;
+    do 
+    {
+        diceRolls = ( (rand() % sides)+1 );
+        seed += rand();
+        seed -= rand();
+        seed += rand();
+        cout << diceRolls << endl;
+        i += 1;
+        total += diceRolls;
+        
+            if (highestRoll < diceRolls) {
+                highestRoll = diceRolls;
+            }
+            if (lowestRoll > diceRolls) {
+                lowestRoll = diceRolls;
+            }
+    }while (rolls >= i);
 
-    roll = (rand() % SIDES);
-    cout << roll << endl;
+    cout << " " << endl;
 
-    roll = (rand() % SIDES);
-    cout << roll << endl;
+    average = total/rolls;
+    cout << "You rolled an total of " << total << "." << endl;
+    cout << "You rolled an average of " << average << "." << endl;
+    cout << "Your highest roll was a " << highestRoll << "." << endl; 
+    cout << "Your lowest roll was a " << lowestRoll << "." << endl; 
 }
