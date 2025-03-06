@@ -9,20 +9,30 @@ using namespace std;
 const int SIDES = 6;
 int seed = time(0);
 int roll;
+int experience, maxExperience;
 string currentPlayer, currentClass;
 int level, hp, strength, constit, dex, intel, wisdom, rizz;
+bool newPlayerCheck;
 void inputStats();
 void displayCharacter();
 void saveCharacter();
 int rollDice();
 int rollStat();
+int newPlayer();
 void characterCreation();
 string chooseClass();
 
 using namespace std;
 
 int main() {
-    characterCreation();
+    newPlayer();
+    if (newPlayerCheck == true) {
+        characterCreation();
+    }
+    else {
+        displayCharacter();
+    }
+    
     cout << "Main Success!" << endl;
 }
 
@@ -59,7 +69,7 @@ do {
     if (!outfile) {
         std::cerr << "Error opening file for writing!" << std::endl;
     }
-    outfile << currentPlayer << " " << currentClass << " " << strength << " " << dex << " " << constit << " " << intel << " " << wisdom << " " << rizz << std::endl;
+    outfile << currentPlayer << " " << currentClass << " " << strength << " " << dex << " " << constit << " " << intel << " " << wisdom << " " << rizz << " " << "Level: " << level << std::endl;
     outfile.close();
 
     std::cout << "File written successfully!" << std::endl;
@@ -67,6 +77,9 @@ do {
 
 void displayCharacter() {
     cout << "\nCharacter Stats:\n";
+    cout << " " << endl;
+    cout << "Current Class: " << currentClass << endl;
+    cout << "------------------------------------" << endl;
     cout << "Strength: " << strength << endl;
     cout << "Dexterity: " << dex << endl;
     cout << "Constitution: " << constit << endl;
@@ -148,4 +161,48 @@ string chooseClass() {
         break;
     }
     return currentClass;
+}
+
+int levelUp() {
+    if (experience >= maxExperience){
+        experience = experience - maxExperience;
+        level += 1;
+    }
+    return level;
+}
+
+int newPlayer() {
+    string name2;
+    bool newPlayerCheck = true; // did we just read the correct player?
+    cout << "Please enter your name: ";
+    cin >> name2;
+
+    std::ifstream infile("character.txt");
+    if (!infile) {
+        std::cerr << "Error opening file for reading!" << std::endl;
+        return -1; // Indicating an error in opening file
+    }
+
+    string line;
+    while (getline(infile, line)) {
+        stringstream ss(line);
+        ss >> currentPlayer >> currentClass >> strength >> dex >> constit >> intel >> wisdom >> rizz >> level;
+
+        // Check if the current player's name matches the input name
+        if (currentPlayer == name2) {
+            newPlayerCheck = false; // We found the player, stop the loop
+            break;
+        }
+    }
+
+    infile.close();
+
+    if (newPlayerCheck) {
+        cout << "Player not found. Creating a new player..." << endl;
+        newPlayerCheck = true;
+    } else {
+        cout << "Player found: " << currentPlayer << endl;
+    }
+
+    return newPlayerCheck;
 }
