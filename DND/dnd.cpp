@@ -299,7 +299,68 @@ int newPlayer() {
             cout << "Password correct. Access granted!" << endl;
         } else {
             cout << "Incorrect password! Access denied." << endl;
-            exit(0);  // If password is incorrect, deny access
+
+            // Ask if they want to reset their password
+            char resetChoice;
+            cout << "Would you like to reset your password? (y/n): ";
+            cin >> resetChoice;
+
+            if (resetChoice == 'y' || resetChoice == 'Y') {
+                // Prompt for the correct class name
+                string enteredClass;
+                cout << "Please enter your class: ";
+                cin >> enteredClass;
+
+                // Check if the class is correct
+                if (enteredClass == currentClass) {
+                    string newPassword;
+                    cout << "Class confirmed. Please enter a new password: ";
+                    cin >> newPassword;
+
+                    // Hash the new password
+                    string hashedNewPassword = hashPassword(newPassword);
+
+                    // Encrypt and save the new password
+                    string encryptedNewPassword = encryptPassword(newPassword);
+                    ofstream passwordFile("passwords.txt", ios::app);
+                    if (!passwordFile) {
+                        cerr << "Error opening password file for writing!" << endl;
+                        return -1;
+                    }
+
+                    // Replace the old password entry with the new one
+                    ifstream passwordFileRead("passwords.txt");
+                    stringstream updatedPasswordFileContent;
+                    string line;
+                    while (getline(passwordFileRead, line)) {
+                        stringstream ss(line);
+                        string fileUser, filePassword;
+                        ss >> fileUser >> filePassword;
+
+                        if (fileUser == currentPlayer) {
+                            // Update the password for the current player
+                            updatedPasswordFileContent << fileUser << " " << encryptedNewPassword << endl;
+                        } else {
+                            // Keep the original lines for other users
+                            updatedPasswordFileContent << line << endl;
+                        }
+                    }
+                    passwordFileRead.close();
+
+                    // Write the updated content back to the password file
+                    ofstream updatedPasswordFile("passwords.txt");
+                    updatedPasswordFile << updatedPasswordFileContent.str();
+                    updatedPasswordFile.close();
+
+                    cout << "Password reset successfully!" << endl;
+                } else {
+                    cout << "Incorrect class name. Exiting the program." << endl;
+                    exit(0);  // Exit the program if the class is incorrect
+                }
+            } else {
+                cout << "Access denied. Exiting the program." << endl;
+                exit(0);  // Exit the program if the user chooses not to reset the password
+            }
         }
     } else {
         cout << "Player not found. Creating a new player..." << endl;
@@ -308,6 +369,7 @@ int newPlayer() {
 
     return newPlayerCheck;
 }
+
 
 
 
