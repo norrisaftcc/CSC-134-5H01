@@ -1,0 +1,209 @@
+:: StoryTitle
+Untitled Story
+
+
+:: StoryData
+{
+  "ifid": "F918336C-C95C-43ED-9DEC-A1212893744F",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "The Beginning of a New Adventure",
+  "zoom": 1
+}
+
+
+:: \ Go Home Geode {"position":"1325,825","size":"100,100"}
+You go home after your converstation.
+
+Excited for your incoming riches you go home.
+
+Satisfied Ending
+    [5/5]
+    
+    [[Restart?->The Beginning of a New Adventure]] 
+
+
+:: \ See Dad Geode {"position":"1450,825","size":"100,100"}
+"Where were you" your dad says with the saddest expression on his face. "I was out with a wizard, he ran off when he found out the cave was full of spiders". "Oh lad" with tiredness in his voice, "my partnership with big cheese was waived because I didn't even have a prototype." He then starts describing a tool you have, and you're crushed. But, I mined this geode, I don't know what it is. Your dad's eyes light up, "Oh lad! That's a rare type of Amethyst! We're rich!" You're still sad but it makes you feel better
+
+You go home after your converstation.
+
+Excited for your incoming riches you go home.
+
+Satisfied Ending
+    [5/5]
+    
+    [[Restart?->The Beginning of a New Adventure]] 
+
+
+:: \ Test {"position":"925,450","size":"100,100"}
+Your name is $name?
+
+(if: $name is "")[
+Name cannot be empty.
+[[Try Again->Go on the quest]]
+]
+(else:) [
+[[Yes->Test2]]
+]
+
+
+:: Charge headfirst into the cave! {"position":"1075,575","size":"100,100"}
+You charge and yell "LEEEEEERRRRRRRRRROOOOOOOOOOOOOYYYYYYYYYYY JEEEEEEEEENNNNNNNNNNNKKKKKKKKIIIIIIIINNNNNNNNNNNSSSSS", your old grandfather who rushed into battle, but also the same one who died to a whelp. You never thought about it before this. You think so much it distracts you and you die to a spider you didn't see
+
+Dead Ending
+    [3/5]
+    
+    [[Restart?->The Beginning of a New Adventure]] 
+
+
+:: Claim the quest {"position":"700,200","size":"100,100"}
+"You're a perfect apprentice for me! If you're willing to accept i'll be willing to take you to a geode cave, where we'll be able to fight enemies, train, and even mine some geodes for some coin." You do like coin, maybe them you'd be able to buy some new adventurer gear, but your dad still needs you. You have to think this through, the decision is eating you alive.
+
+Do you?
+
+[[Go to your dad's shop]] 
+Or
+[[Go on the quest]] 
+
+
+:: Go home {"position":"1200,825","size":"100,100"}
+Sad and devistated you go to bed, tomorrow is another day.
+
+Destroyed Ending
+    [4/5]
+    
+    [[Restart?->The Beginning of a New Adventure]] 
+
+
+:: Go on the quest {"position":"925,300","size":"100,100"}
+Going to the cave might be a better idea anyway, "My dad is a hard workerer, and i'm making some money for us" you rationalize. "We're here young apprentice", oh and by the way what's your name?
+
+(input-box:2bind $name,"")
+
+[[Enter Name -> Test]]
+
+
+:: Go to the town square {"position":"375,300","size":"100,100"}
+You got out of bed excited for the propects of becoming an adevnturer, but your dad is on a time crunch on a new project. While heading to the your dad's shop you spot a gruff old wizard, with a long white beard, he has a quest in his hand. This could be your chance!
+
+What do you do?
+
+[[Claim the quest]] 
+[[Go to your dad's shop]] 
+
+
+:: Go to your dad's shop {"position":"750,500","size":"100,100"}
+You end up going to your dad's shop, he's panicking, frantically running around looking for the right tool, his workshop is a mess. A wave of relief but continued panic rolls over him. "I'm so glad you're here, lad! I'm looking for a specific tool for this final part of my new invention". The tool he describes is a tool you have in your back pocket. You don't remember having this before, but you're not angry. You hand over the tool to your dad, his expression changes from one of panic, to one of joy. He gets to work. After an hour it's complete. The world's first cheese grater.
+
+Your dad pitches his idea to big cheese. They love it and partner up. You now live with riches beyond your wildest dreams!
+
+Rich Ending
+    [2/5]
+    
+[[Restart?->The Beginning of a New Adventure]] 
+
+
+:: Leave aswell {"position":"1200,700","size":"100,100"}
+You left, but since you don't know teleport you have to walk. "Why didn't he just teleport us here?" you think, tiredly to yourself. You get back to town, it's night.
+
+[[Go home]]
+[[See Dad]]
+
+
+:: Mage {"position":"1075,450","size":"100,100"}
+"Ah $name the Mage, has a good ring to it!"
+
+After 30 minutes of explaining arcane magic to you, you're ready.
+
+[[Charge headfirst into the cave!]]
+[[You wait for the Wizard]]
+
+
+:: Mine some geodes {"position":"1325,700","size":"100,100"}
+You mine some geodes and get out succesfully, unfortunatley it isn't as easy as it looks to mine. You return home not empty-handed.
+
+[[Go Home -> Go Home Geode]]
+[[See Dad -> See Dad Geode]]
+
+
+:: See Dad {"position":"1075,825","size":"100,100"}
+"Where were you" your dad says with the saddest expression on his face. "I was out with a wizard, he ran off when he found out the cave was full of spiders". "Oh lad" with tiredness in his voice, "my partnership with big cheese was waived because I didn't even have a prototype." He then starts describing a tool you have, and you're crushed.
+
+You go home after your converstation.
+
+Sad and devistated you go to bed, tomorrow is another day.
+
+Destroyed Ending
+    [4/5]
+    
+    [[Restart?->The Beginning of a New Adventure]] 
+
+
+:: Stay Home {"position":"275,950","size":"100,100"}
+Your dad, defeated, stops knocking. Show's him! How dare he ask you to help when he knows you're busy watching reels on your scroll in bed. Soon enough you hear a knock at your door. It's some wizard? He has a deep, raspy voice, which has experience and wisdom from the ages. He is asking you about some quest, that he needs you, and only you for this.
+
+What a lod of bologna.
+
+What will you do?
+[[Claim the quest]] 
+[[Stay Home‎ ]] 
+
+
+:: Stay Home‎\  {"position":"275,1150","size":"100,100"}
+Maybe you we're right. Some people aren't fit to be adventurers. As you sit in bed on your scroll, missing out on everything around you, you die of starvation as you forgot to eat.
+
+Lazy Ending
+    [1/5]
+    
+[[Restart?->The Beginning of a New Adventure]] 
+
+
+:: Stay hOme {"position":"1375,125","size":"100,100"}
+
+
+
+:: Stay home {"position":"250,800","size":"100,100"}
+"Not everyone is cut out to be an adventurer" you think to yourself. You soon here a knock at your door, it's probably your dad who's working on an important project who's been asking you alot to help. Honestly you can't be asked to get out of bed.
+
+What will you do?
+
+[[Go to your dad's shop]] 
+[[Stay Home]]
+
+
+:: Test {"position":"1225,100","size":"100,100"}
+
+
+
+:: Test2 {"position":"1075,325","size":"100,100"}
+"Ok $name, we have arived at the cave, here we will practice your skills. Which class are you again?"
+
+You were a:
+[[Mage]]
+[[Warrior]]
+
+
+:: The Beginning of a New Adventure {"position":"250,350","size":"100,100"}
+This is the beginning of your adventure!
+
+Will you:
+
+[[Go to the town square]] 
+Or
+ [[Stay home]] 
+
+
+:: Warrior {"position":"1200,450","size":"100,100"}
+"Ah $name the Warrior, has a good ring to it!"
+
+After explaining how warrior's don't think and just fight, you're ready.
+
+[[Charge headfirst into the cave!]]
+
+
+:: You wait for the Wizard {"position":"1200,575","size":"100,100"}
+You wait for the wizard to prepare, he takes 20 minutes charging his mana. You're bored as he's tasked you with reading arcane texts to expand your intelligence. You regret not helping your dad or staying at home. He eventually gets ready, and enter the cave. Little did you guys know, the cave was the cave of spiders, the wizard's biggest fear are spiders. Quivering he runs off.
+
+[[Leave aswell]]
+[[Mine some geodes]]
