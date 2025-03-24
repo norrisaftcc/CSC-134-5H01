@@ -17,6 +17,7 @@ void repeater(){
         cin >> num1;
     } 
 
+
     cout << num1 << " times 1 is " << num1*1 << "." << endl;
     cout << num1 << " times 2 is " << num1*2 << "." << endl;
     cout << num1 << " times 3 is " << num1*3 << "." << endl;
