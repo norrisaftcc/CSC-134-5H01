@@ -19,5 +19,5 @@ int main() {
         displayCharacter();
     }
 
-    cout << "Main Success!" << endl;
+    main_menu();
 }

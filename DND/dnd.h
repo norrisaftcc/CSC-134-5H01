@@ -1,3 +1,6 @@
+#ifndef DND_H
+#define DND_H
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>
@@ -25,6 +28,7 @@ int rollDice();
 int rollStat();
 int newPlayer();
 void characterCreation();
+int load_progress();
 string chooseClass();
 string encryptDecrypt(const string &input, const string &key);
 string encryptStats(const string &stats);
@@ -266,7 +270,6 @@ int newPlayer() {
         // Decrypt the stats
         string decryptedStats = decryptStats(encryptedStats);
         stringstream ssDecrypted(decryptedStats);
-
         ssDecrypted >> strength >> dex >> constit >> intel >> wisdom >> rizz;
 
         // Check if the current player's name matches the input name
@@ -278,13 +281,13 @@ int newPlayer() {
 
     statsFile.close();
 
-    if (newPlayerCheck == false) {
+    if (!newPlayerCheck) {
         // Player exists, now prompt for password
         string enteredPassword;
         cout << "Player found: " << currentPlayer << ". Please enter your password: ";
         cin >> enteredPassword;
 
-        // Check if the entered password matches the stored hashed password
+        // Check if the entered password matches the stored password
         if (checkPassword(currentPlayer, enteredPassword)) {
             cout << "Password correct. Access granted!" << endl;
         } else {
@@ -307,21 +310,19 @@ int newPlayer() {
                     cout << "Class confirmed. Please enter a new password: ";
                     cin >> newPassword;
 
-                    // Hash the new password
-                    string hashedNewPassword = hashPassword(newPassword);
-
-                    // Encrypt and save the new password
+                    // Encrypt the new password
                     string encryptedNewPassword = encryptPassword(newPassword);
-                    ofstream passwordFile("passwords.txt", ios::app);
-                    if (!passwordFile) {
-                        cerr << "Error opening password file for writing!" << endl;
+
+                    // Read existing passwords and update the file
+                    ifstream passwordFileRead("passwords.txt");
+                    if (!passwordFileRead) {
+                        cerr << "Error opening password file for reading!" << endl;
                         return -1;
                     }
 
-                    // Replace the old password entry with the new one
-                    ifstream passwordFileRead("passwords.txt");
                     stringstream updatedPasswordFileContent;
-                    string line;
+                    bool found = false;
+
                     while (getline(passwordFileRead, line)) {
                         stringstream ss(line);
                         string fileUser, filePassword;
@@ -330,6 +331,7 @@ int newPlayer() {
                         if (fileUser == currentPlayer) {
                             // Update the password for the current player
                             updatedPasswordFileContent << fileUser << " " << encryptedNewPassword << endl;
+                            found = true;
                         } else {
                             // Keep the original lines for other users
                             updatedPasswordFileContent << line << endl;
@@ -337,19 +339,27 @@ int newPlayer() {
                     }
                     passwordFileRead.close();
 
-                    // Write the updated content back to the password file
-                    ofstream updatedPasswordFile("passwords.txt");
-                    updatedPasswordFile << updatedPasswordFileContent.str();
-                    updatedPasswordFile.close();
+                    // If user was found, update the file
+                    if (found) {
+                        ofstream updatedPasswordFile("passwords.txt", ios::trunc);
+                        if (!updatedPasswordFile) {
+                            cerr << "Error opening password file for writing!" << endl;
+                            return -1;
+                        }
+                        updatedPasswordFile << updatedPasswordFileContent.str();
+                        updatedPasswordFile.close();
 
-                    cout << "Password reset successfully!" << endl;
+                        cout << "Password reset successfully!" << endl;
+                    } else {
+                        cout << "Error: User not found in password file!" << endl;
+                    }
                 } else {
                     cout << "Incorrect class name. Exiting the program." << endl;
-                    exit(0);  // Exit the program if the class is incorrect
+                    exit(0);
                 }
             } else {
                 cout << "Access denied. Exiting the program." << endl;
-                exit(0);  // Exit the program if the user chooses not to reset the password
+                exit(0);
             }
         }
     } else {
@@ -361,16 +371,29 @@ int newPlayer() {
 }
 
 
+int load_progress() {
+    ifstream progressFile("player_progress.txt");
+    int lastChoice = 0;
+    if (progressFile) {
+        string name, encryptedChoice;
+        while (progressFile >> name >> encryptedChoice) {
+            // Decrypt the progress for each player
+            string decryptedChoice = decryptStats(encryptedChoice);
+            if (name == currentPlayer) {
+                lastChoice = stoi(decryptedChoice);  // Convert decrypted choice to integer
+                break;  // Stop once we find the current player
+            }
+        }
+        progressFile.close();
+    } else {
+        cerr << "Error: Unable to load progress!" << endl;
+    }
+    return lastChoice;
+}
 
 
 
-
-
-
-
-
-
-
+#endif // DND_H
 
 
 
