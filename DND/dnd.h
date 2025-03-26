@@ -34,16 +34,6 @@ string decryptPassword(const string &encryptedPassword);
 string hashPassword(const string &password);
 bool checkPassword(const string &username, const string &password);
 
-int main() {
-    if (newPlayer()) {
-        characterCreation();
-    } else {
-        displayCharacter();
-    }
-
-    cout << "Main Success!" << endl;
-}
-
 // XOR encryption/decryption function
 string encryptDecrypt(const string &input, const string &key) {
     string output = input;
