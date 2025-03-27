@@ -69,7 +69,29 @@ void main_menu() {
 
   // Normal game start if no progress exists
   cout << "" << endl;
-  cout << "You're in front of a spooky old house..." << endl;
+  cout << "Welcome " << currentPlayer << " the " << currentClass << "." << endl;
+  cout << "You've awakened as a " << currentClass << "." << endl;
+  if (currentClass == "Fighter"){
+    cout << "Since you're a fighter it makes you better at using physical abilites and brute force!" << endl;
+  }
+  else if (currentClass == "Magic-User"){
+    cout << "Since you're a magic-user it gives you the immense power of abilites but you're weaker in health and physical combat." << endl;
+  }
+  else if (currentClass == "Thief"){
+      emoji = "Since you're a thief you're good at stealth and are really agile, but you're strength is weaker than most.";
+  }
+  else if (currentClass == "Cleric"){
+      emoji = "Since you're a cleric you are given the ability to heal people, and connect with nature. This comes with weaker health, but you have things to counteract that";
+  }
+  else if (currentClass == "Elf"){
+      emoji = "Since you're an elf you're good with bows and arrows, but you're more frail.";
+  }
+  else if (currentClass == "Dwarf"){
+      emoji = "Since you're a dwarf you're stronger and you have the ability to make armor more powerful!";
+  }
+  else if (currentClass == "Halfling"){
+      emoji = "Since you're a halfling you're a master with the spear.";
+  }
   cout << "========================================" << endl;
   cout << emoji << "  : " << currentPlayer << " the " << currentClass << endl;
   if (partyMember){
@@ -228,7 +250,15 @@ void choice_break_in(){
   int doorRoll = rollDice() + rollDice();
   cout << "You try to break down the door" << endl;
   cout << "Door Strength: " << door << endl;
+  if (currentClass == "Fighter"){
+    cout << "You Roll " << youRoll << "!" << endl;
+    cout << "You gain +3 for the class bonus!" << endl;
+    youRoll += 3;
+    cout << "You Roll " << youRoll << "!" << endl;
+  }
+  else{
   cout << "You Roll " << youRoll << "!" << endl;
+  }
   cout << "Door Rolls " << doorRoll << "!" << endl;
   if (strength > door){
     doorRoll = doorRoll - (strength - door);
@@ -250,7 +280,7 @@ void choice_break_in(){
       cout << "Your New Roll " << youRoll << "!" << endl;
     }
   }
-  if (youRoll > doorRoll){
+  if (youRoll > doorRoll || youRoll == doorRoll){
     cout << "You break it down!" << endl;
   }
   else {
