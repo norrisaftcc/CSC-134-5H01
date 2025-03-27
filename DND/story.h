@@ -256,6 +256,18 @@ void choice_break_in(){
     youRoll += 3;
     cout << "You Roll " << youRoll << "!" << endl;
   }
+  else if (currentClass == "Thief"){
+    cout << "You Roll " << youRoll << "!" << endl;
+    cout << "You lose 3 for the class debuff" << endl;
+    youRoll -= 3;
+    cout << "You Roll " << youRoll << "!" << endl;
+  }
+  else if (currentClass == "Magic-User"){
+    cout << "You Roll " << youRoll << "!" << endl;
+    cout << "You lose 5 for the class debuff" << endl;
+    youRoll -= 5;
+    cout << "You Roll " << youRoll << "!" << endl;
+  }
   else{
   cout << "You Roll " << youRoll << "!" << endl;
   }
