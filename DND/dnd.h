@@ -194,7 +194,7 @@ void inputStats() {
 }
 
 int rollDice() {
-    return rand() % 6 + 1;
+    return (rand() % 6) + 1;
 }
 
 int rollStat() {

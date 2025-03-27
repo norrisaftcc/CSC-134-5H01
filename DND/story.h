@@ -16,6 +16,7 @@ using namespace std;
 
 
 void main_menu();
+void main_menu_fake();
 void choice_front_door();
 void choice_back_door();
 void choice_go_home();
@@ -23,35 +24,77 @@ void choice_food();
 void choice_bed();
 void choice_break_in();
 void save_progress(int choice);
+void displayCharacterAction();
 
 void main_menu() {
+  static bool firstLoad = true;  // Tracks whether this is the first time loading progress
   int lastChoice = load_progress(); // Load last position
+  string emoji;
+  static bool partyMember = false;
 
-  if (lastChoice != 0) {
+  if (currentClass == "Fighter"){
+      emoji = "⚔️";
+  }
+  else if (currentClass == "Magic-User"){
+      emoji = "🧙";
+  }
+  else if (currentClass == "Thief"){
+      emoji = "🗡️";
+  }
+  else if (currentClass == "Cleric"){
+      emoji = "💉";
+  }
+  else if (currentClass == "Elf"){
+      emoji = "🏹";
+  }
+  else if (currentClass == "Dwarf"){
+      emoji = "🔨";
+  }
+  else if (currentClass == "Halfling"){
+      emoji = "🔱";
+  }
+
+  if (lastChoice != 0 && firstLoad) {
       cout << "Resuming from your last choice: " << lastChoice << endl;
-      switch (lastChoice) {
-          case 1:
-              choice_front_door();
-              return;
-          case 2:
-              choice_go_home();
-              return;
-      }
+      firstLoad = false;  // Prevent message from appearing again
+//      switch (lastChoice) {
+//          case 1:
+//              choice_front_door();
+//              return;
+//          case 2:
+//              choice_go_home();
+//              return;
+//      }
   }
 
   // Normal game start if no progress exists
-  cout << "Main Menu" << endl;
+  cout << "" << endl;
   cout << "You're in front of a spooky old house..." << endl;
-  cout << "Do you:" << endl;
+  cout << "========================================" << endl;
+  cout << emoji << "  : " << currentPlayer << " the " << currentClass << endl;
+  if (partyMember){
+      cout << "TODO" << endl;
+  }
   cout << "1. Try the front door" << endl;
   cout << "2. Sneak around back" << endl;
   cout << "3. Forget it, and go home" << endl;
-  cout << "4. [Quit]" << endl;
+  cout << "4. Stats" << endl;
+  cout << "5. Test" << endl;
+  cout << "6. [Quit]" << endl;
   cout << "Choose: ";
-  
+
   int choice;
   cin >> choice;
   save_progress(choice); // Save progress at this step
+
+  switch (choice) {
+      case 1:
+      case 2:
+      case 3:
+      case 5:
+          save_progress(choice);
+          break;
+  }
 
   switch (choice) {
       case 1:
@@ -63,6 +106,12 @@ void main_menu() {
       case 3:
           choice_go_home();
           break;
+      case 4:
+          displayCharacterAction();
+          break;
+      case 5:
+          choice_break_in();
+          break;
       default:
           cout << "That's not a valid choice, please try again." << endl;
           cin.ignore();
@@ -71,6 +120,21 @@ void main_menu() {
   }
 }
 
+
+void displayCharacterAction(){
+  displayCharacter();
+  cout << "Any Key: Go back" << endl;
+  int choice;
+  cin >> choice;
+  switch (choice){
+    case 1:
+      main_menu();
+      break;
+    default:
+    main_menu();
+    break;
+  }
+}
 
 void choice_front_door() {
   save_progress(1);
@@ -152,13 +216,46 @@ void choice_bed(){
 
 void choice_break_in(){
   save_progress(0);
-  int door = 11;
+  srand(time(0));
+  int door = rollDice() + rollDice();
+  if (door < 5){
+    door += 3;
+  }
+  else if (door > 15){
+    door -= 3;
+  }
+  int youRoll = rollDice() + rollDice();
+  int doorRoll = rollDice() + rollDice();
   cout << "You try to break down the door" << endl;
-  if (door < strength){
+  cout << "Door Strength: " << door << endl;
+  cout << "You Roll " << youRoll << "!" << endl;
+  cout << "Door Rolls " << doorRoll << "!" << endl;
+  if (strength > door){
+    doorRoll = doorRoll - (strength - door);
+    cout << "Because you're stronger you weaken the doors roll!" << endl;
+    if (doorRoll < 0){
+      cout << "New Door Roll " << 0 << "!" << endl;
+    }
+    else {
+      cout << "New Door Roll " << doorRoll << "!" << endl;
+    }
+  }
+  else if(door > strength) {
+    youRoll = youRoll - (door - strength);
+    cout << "Because you're weaker the door weakens your roll!" << endl;
+    if (youRoll < 0){
+      cout << "Your New Roll " << 0 << "!" << endl;
+    }
+    else {
+      cout << "Your New Roll " << youRoll << "!" << endl;
+    }
+  }
+  if (youRoll > doorRoll){
     cout << "You break it down!" << endl;
   }
   else {
     cout << "You don't break down the door" << endl;
+    choice_go_home();
   }
 }
 
