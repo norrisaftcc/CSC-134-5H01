@@ -1,0 +1,23 @@
+{
+    "enemies": [
+      {
+        "id": 1,
+        "name": "Door",
+        "type": "object",
+        "level": 1,
+        "health": 50,
+        "moves": [1],
+        "exp": 0
+      },
+      {
+        "id": 2,
+        "name": "Goblin",
+        "type": "monster",
+        "level": 3,
+        "health": 100,
+        "moves": [2, 3],
+        "exp": 50
+      }
+    ]
+  }
+  

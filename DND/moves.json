@@ -1,0 +1,29 @@
+{
+    "moves": [
+      {
+        "id": 1,
+        "name": "Bash",
+        "type": "attack",
+        "damage": 10,
+        "energy_cost": 5,
+        "description": "The door swings and bashes with brute force."
+      },
+      {
+        "id": 2,
+        "name": "Slash",
+        "type": "attack",
+        "damage": 15,
+        "energy_cost": 10,
+        "description": "Goblin slashes with a sharp blade."
+      },
+      {
+        "id": 3,
+        "name": "Fireball",
+        "type": "magic",
+        "damage": 30,
+        "energy_cost": 20,
+        "description": "Goblin casts a fireball spell."
+      }
+    ]
+  }
+  
