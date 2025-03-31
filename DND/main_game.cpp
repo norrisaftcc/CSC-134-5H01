@@ -10,8 +10,6 @@
 #include <cctype>
 #include "dnd.h"
 #include "story.h"
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 using namespace std;
 
 int main() {
