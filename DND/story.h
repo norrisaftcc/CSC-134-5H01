@@ -25,6 +25,7 @@ void choice_bed();
 void choice_break_in();
 void save_progress(int choice);
 void displayCharacterAction();
+void battleWithEnemy(const std::string& currentClass, int& strength, const std::string& enemy);
 
 void main_menu() {
   static bool firstLoad = true;  // Tracks whether this is the first time loading progress
@@ -239,66 +240,16 @@ void choice_bed(){
 void choice_break_in(){
   save_progress(0);
   srand(time(0));
-  int door = rollDice() + rollDice();
-  if (door < 5){
-    door += 3;
-  }
-  else if (door > 15){
-    door -= 3;
-  }
-  int youRoll = rollDice() + rollDice();
-  int doorRoll = rollDice() + rollDice();
-  cout << "You try to break down the door" << endl;
-  cout << "Door Strength: " << door << endl;
-  if (currentClass == "Fighter"){
-    cout << "You Roll " << youRoll << "!" << endl;
-    cout << "You gain +3 for the class bonus!" << endl;
-    youRoll += 3;
-    cout << "You Roll " << youRoll << "!" << endl;
-  }
-  else if (currentClass == "Thief"){
-    cout << "You Roll " << youRoll << "!" << endl;
-    cout << "You lose 3 for the class debuff" << endl;
-    youRoll -= 3;
-    cout << "You Roll " << youRoll << "!" << endl;
-  }
-  else if (currentClass == "Magic-User"){
-    cout << "You Roll " << youRoll << "!" << endl;
-    cout << "You lose 5 for the class debuff" << endl;
-    youRoll -= 5;
-    cout << "You Roll " << youRoll << "!" << endl;
-  }
-  else{
-  cout << "You Roll " << youRoll << "!" << endl;
-  }
-  cout << "Door Rolls " << doorRoll << "!" << endl;
-  if (strength > door){
-    doorRoll = doorRoll - (strength - door);
-    cout << "Because you're stronger you weaken the doors roll!" << endl;
-    if (doorRoll < 0){
-      cout << "New Door Roll " << 0 << "!" << endl;
-    }
-    else {
-      cout << "New Door Roll " << doorRoll << "!" << endl;
-    }
-  }
-  else if(door > strength) {
-    youRoll = youRoll - (door - strength);
-    cout << "Because you're weaker the door weakens your roll!" << endl;
-    if (youRoll < 0){
-      cout << "Your New Roll " << 0 << "!" << endl;
-    }
-    else {
-      cout << "Your New Roll " << youRoll << "!" << endl;
-    }
-  }
-  if (youRoll > doorRoll || youRoll == doorRoll){
-    cout << "You break it down!" << endl;
-  }
-  else {
-    cout << "You don't break down the door" << endl;
-    choice_go_home();
-  }
+  string enemy = "Door";
+  
+  battleWithEnemy(currentClass, strength, enemy);
+
+}
+
+void battle_victory_doorHouse(){
+  cout << "You gain 500 XP!" << endl;
+  int experience;
+  experience += 500;
 }
 
 void save_progress(int choice) {
@@ -335,6 +286,87 @@ void save_progress(int choice) {
   }
 }
 
+void battleWithEnemy(const std::string& currentClass, int& strength, const std::string& enemy) {
+  srand(time(0));
+  int youRoll = rollDice() + rollDice();
+  int enemyRoll = rollDice() + rollDice();
+  int enemyStrength = rollDice() + rollDice();
+
+  if (enemy == "Door"){
+    if (enemyStrength < 5){
+      enemyStrength += 3;
+    }
+    else if (enemyStrength > 15){
+      enemyStrength -= 3;
+    }
+  }
+
+  std::cout << enemy << " Strength: " << enemyStrength << std::endl;
+
+  // Class-based adjustments
+  if (currentClass == "Fighter") {
+      std::cout << "You Roll " << youRoll << "!" << std::endl;
+      std::cout << "You gain +3 for the class bonus!" << std::endl;
+      youRoll += 3;
+      if (youRoll > 20){
+        youRoll = 20;
+      }
+      std::cout << "You Roll " << youRoll << "!" << std::endl;
+  }
+  else if (currentClass == "Thief") {
+      std::cout << "You Roll " << youRoll << "!" << std::endl;
+      std::cout << "You lose 3 for the class debuff" << std::endl;
+      youRoll -= 3;
+      if (youRoll < 0){
+        youRoll = 0;
+      }
+      std::cout << "You Roll " << youRoll << "!" << std::endl;
+  }
+  else if (currentClass == "Magic-User") {
+      std::cout << "You Roll " << youRoll << "!" << std::endl;
+      std::cout << "You lose 5 for the class debuff" << std::endl;
+      youRoll -= 5;
+      if (youRoll < 0){
+        youRoll = 0;
+      }
+      std::cout << "You Roll " << youRoll << "!" << std::endl;
+  }
+  else {
+      std::cout << "You Roll " << youRoll << "!" << std::endl;
+  }
+
+  std::cout << enemy << " Rolls " << enemyRoll << "!" << std::endl;
+
+  // Adjust rolls based on strength difference
+  if (strength > enemyStrength) {
+      enemyRoll = enemyRoll - (strength - enemyStrength);
+      std::cout << "Because you're stronger, you weaken the " << enemy << "'s roll!" << std::endl;
+      if (enemyRoll < 0) {
+          std::cout << "New "<< enemy <<" Roll " << 0 << "!" << std::endl;
+      } else {
+          std::cout << "New " << enemy << " Roll " << enemyRoll << "!" << std::endl;
+      }
+  }
+  else if (enemyStrength > strength) {
+      youRoll = youRoll - (enemyStrength - strength);
+      std::cout << "Because you're weaker, the" << enemy << "weakens your roll!" << std::endl;
+      if (youRoll < 0) {
+          std::cout << "Your New Roll " << 0 << "!" << std::endl;
+      } else {
+          std::cout << "Your New Roll " << youRoll << "!" << std::endl;
+      }
+  }
+  if (enemy == "Door"){
+    if (youRoll > enemyRoll || youRoll == enemyRoll){
+      cout << "You break it down!" << endl;
+      battle_victory_doorHouse();
+    }
+    else {
+      cout << "You don't break down the door" << endl;
+      choice_go_home();
+    }
+  }
+}
 
 
 
