@@ -27,6 +27,36 @@ void save_progress(int choice);
 void displayCharacterAction();
 void battleWithEnemy(const std::string& currentClass, int& strength, const std::string& enemy);
 
+struct LevelData {
+  int level;
+  int xpThreshold;
+  int proficiencyBonus;
+};
+
+const LevelData levelTable[] = {
+  {1, 0, 2},
+  {2, 300, 2},
+  {3, 900, 2},
+  {4, 2700, 2},
+  {5, 6500, 3},
+  {6, 14000, 3},
+  {7, 23000, 3},
+  {8, 34000, 3},
+  {9, 48000, 4},
+  {10, 64000, 4},
+  {11, 85000, 4},
+  {12, 100000, 4},
+  {13, 120000, 5},
+  {14, 140000, 5},
+  {15, 165000, 5},
+  {16, 195000, 5},
+  {17, 225000, 6},
+  {18, 265000, 6},
+  {19, 305000, 6},
+  {20, 355000, 6}
+};
+
+
 void main_menu() {
   static bool firstLoad = true;  // Tracks whether this is the first time loading progress
   int lastChoice = load_progress(); // Load last position
@@ -248,8 +278,8 @@ void choice_break_in(){
 
 void battle_victory_doorHouse(){
   cout << "You gain 500 XP!" << endl;
-  int experience;
-  experience += 500;
+  experiencePoints(500);
+  main_menu();
 }
 
 void save_progress(int choice) {
@@ -367,6 +397,40 @@ void battleWithEnemy(const std::string& currentClass, int& strength, const std::
     }
   }
 }
+
+void experiencePoints(int xpGained) {
+  cout << "You gain " << xpGained << " XP!" << endl;
+  experience += xpGained;
+
+  int newLevel = level;
+  int newProfBonus = 0;
+
+  for (int i = 19; i >= 0; --i) {
+      if (experience >= levelTable[i].xpThreshold) {
+          newLevel = levelTable[i].level;
+          newProfBonus = levelTable[i].proficiencyBonus;
+          break;
+      }
+  }
+
+  if (newLevel > level) {
+      level = newLevel;
+      cout << "Level Up! You are now Level " << level << "!" << endl;
+  }
+
+  int nextLevelXP = (level < 20) ? levelTable[level].xpThreshold : levelTable[19].xpThreshold;
+  cout << "Current XP: " << experience << " / " << nextLevelXP << " (Level " << level << ")" << endl;
+  cout << "Proficiency Bonus: +" << newProfBonus << endl;
+}
+
+int getProficiencyBonus() {
+  if (level >= 1 && level <= 4) return 2;
+  else if (level <= 8) return 3;
+  else if (level <= 12) return 4;
+  else if (level <= 16) return 5;
+  else return 6;
+}
+
 
 
 

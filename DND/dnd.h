@@ -11,16 +11,20 @@
 #include <map>
 #include <algorithm>
 #include <cctype>
+#include "story.h"
 using namespace std;
 
 const int SIDES = 6;
 int seed = time(0);
 int roll;
-int experience, maxExperience;
+int experience = 0, maxExperience;
 string currentPlayer, currentClass;
 int level, hp, strength, constit, dex, intel, wisdom, rizz;
 bool newPlayerCheck;
+int statPoints = 0;
+int lastProficiencyBonus = 2;
 
+void updateLevel();
 void inputStats();
 void displayCharacter();
 void saveCharacter();
@@ -37,6 +41,8 @@ string encryptPassword(const string &password);
 string decryptPassword(const string &encryptedPassword);
 string hashPassword(const string &password);
 bool checkPassword(const string &username, const string &password);
+void spendStatPoints();
+int getProficiencyBonus();
 
 // XOR encryption/decryption function
 string encryptDecrypt(const string &input, const string &key) {
@@ -170,6 +176,11 @@ void characterCreation() {
 }
 
 void displayCharacter() {
+    updateLevel();  // Always check level & bonus
+    if (statPoints > 0) {
+        spendStatPoints();  // Prompt user to spend points if they have any
+    }
+
     cout << "\nCharacter Stats:\n";
     cout << " " << endl;
     cout << "Current Class: " << currentClass << endl;
@@ -180,6 +191,9 @@ void displayCharacter() {
     cout << "Intelligence: " << intel << endl;
     cout << "Wisdom: " << wisdom << endl;
     cout << "Charisma: " << rizz << endl;
+    cout << "" << endl;
+    cout << "Level: " << level << " | XP: " << experience << " | Proficiency Bonus: +" << getProficiencyBonus() << endl;
+    cout << "Unspent Stat Points: " << statPoints << endl;
     cout << "" << endl;
 }
 
@@ -390,6 +404,61 @@ int load_progress() {
     }
     return lastChoice;
 }
+
+void updateLevel() {
+    int oldLevel = level;
+
+    int xpThresholds[] = {
+        0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000,
+        85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000,
+        305000, 355000
+    };
+
+    for (int i = 19; i >= 0; --i) {
+        if (experience >= xpThresholds[i]) {
+            level = i + 1;
+            break;
+        }
+    }
+
+    int newProficiencyBonus = getProficiencyBonus();
+    if (newProficiencyBonus > lastProficiencyBonus) {
+        int bonusIncrease = newProficiencyBonus - lastProficiencyBonus;
+        statPoints += bonusIncrease;  // Give stat points based on PB increase
+        lastProficiencyBonus = newProficiencyBonus;
+
+        cout << "\n🆙 Proficiency Bonus increased to +" << newProficiencyBonus << "!" << endl;
+        cout << "🎁 You received " << bonusIncrease << " bonus stat point(s)!" << endl;
+    }
+
+    if (level > oldLevel) {
+        cout << "\n🎉 You leveled up! Level " << oldLevel << " → Level " << level << "!" << endl;
+    }
+}
+
+void spendStatPoints() {
+    while (statPoints > 0) {
+        cout << "\nYou have " << statPoints << " stat point(s) to spend." << endl;
+        cout << "Which stat would you like to increase?" << endl;
+        cout << "1. Strength\n2. Dexterity\n3. Constitution\n4. Intelligence\n5. Wisdom\n6. Charisma\n7. Cancel\n";
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1: strength++; break;
+            case 2: dex++; break;
+            case 3: constit++; break;
+            case 4: intel++; break;
+            case 5: wisdom++; break;
+            case 6: rizz++; break;
+            case 7: return;
+            default: cout << "Invalid choice. Try again.\n"; continue;
+        }
+        statPoints--;
+        cout << "Stat increased! Remaining points: " << statPoints << endl;
+    }
+}
+
 
 
 
