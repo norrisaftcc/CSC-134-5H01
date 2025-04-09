@@ -11,7 +11,6 @@
 #include <map>
 #include <algorithm>
 #include <cctype>
-#include "story.h"
 using namespace std;
 
 const int SIDES = 6;
@@ -23,11 +22,14 @@ int level, hp, strength, constit, dex, intel, wisdom, rizz;
 bool newPlayerCheck;
 int statPoints = 0;
 int lastProficiencyBonus = 2;
+int proficiencyPoints = 0;
 
 void updateLevel();
 void inputStats();
 void displayCharacter();
 void saveCharacter();
+void overwriteCharacterData();
+void spendStatPoints();
 int rollDice();
 int rollStat();
 int newPlayer();
@@ -41,7 +43,6 @@ string encryptPassword(const string &password);
 string decryptPassword(const string &encryptedPassword);
 string hashPassword(const string &password);
 bool checkPassword(const string &username, const string &password);
-void spendStatPoints();
 int getProficiencyBonus();
 
 // XOR encryption/decryption function
@@ -304,6 +305,10 @@ int newPlayer() {
         // Check if the entered password matches the stored password
         if (checkPassword(currentPlayer, enteredPassword)) {
             cout << "Password correct. Access granted!" << endl;
+
+            // After successful login, update their data (XP, level, stat points)
+            overwriteCharacterData();  // Ensure stats are saved correctly after login
+
         } else {
             cout << "Incorrect password! Access denied." << endl;
 
@@ -385,6 +390,7 @@ int newPlayer() {
 }
 
 
+
 int load_progress() {
     ifstream progressFile("player_progress.txt");
     int lastChoice = 0;
@@ -408,12 +414,14 @@ int load_progress() {
 void updateLevel() {
     int oldLevel = level;
 
+    // XP thresholds for leveling up
     int xpThresholds[] = {
         0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000,
         85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000,
         305000, 355000
     };
 
+    // Level up logic based on experience points
     for (int i = 19; i >= 0; --i) {
         if (experience >= xpThresholds[i]) {
             level = i + 1;
@@ -421,41 +429,157 @@ void updateLevel() {
         }
     }
 
-    int newProficiencyBonus = getProficiencyBonus();
-    if (newProficiencyBonus > lastProficiencyBonus) {
-        int bonusIncrease = newProficiencyBonus - lastProficiencyBonus;
-        statPoints += bonusIncrease;  // Give stat points based on PB increase
-        lastProficiencyBonus = newProficiencyBonus;
+    // Add stat points based on the new level
+    int statPointsAdded = level - oldLevel; // You gain one stat point per level
+    statPoints += statPointsAdded;  // Increase the stat points
 
-        cout << "\n🆙 Proficiency Bonus increased to +" << newProficiencyBonus << "!" << endl;
-        cout << "🎁 You received " << bonusIncrease << " bonus stat point(s)!" << endl;
+    // Notify player about the stat points added
+    if (statPointsAdded > 0) {
+        cout << "\n🆙 You've leveled up to Level " << level << "!" << endl;
+        cout << "🎁 You received " << statPointsAdded << " stat point(s)!" << endl;
     }
 
-    if (level > oldLevel) {
-        cout << "\n🎉 You leveled up! Level " << oldLevel << " → Level " << level << "!" << endl;
+    // Additional level-up actions like learning new abilities can be placed here
+}
+
+
+void spendStatPoints() {
+    if (statPoints == 0) {
+        cout << "You have no stat points to spend!" << endl;
+        return;
+    }
+
+    cout << "You have " << statPoints << " stat point(s) to spend!" << endl;
+    cout << "Choose a stat to improve:" << endl;
+    cout << "1. Strength: " << strength << endl;
+    cout << "2. Dexterity: " << dex << endl;
+    cout << "3. Constitution: " << constit << endl;
+    cout << "4. Intelligence: " << intel << endl;
+    cout << "5. Wisdom: " << wisdom << endl;
+    cout << "6. Charisma: " << rizz << endl;
+    cout << "Enter the number of the stat you want to increase: ";
+    
+    int choice;
+    cin >> choice;
+
+    if (choice < 1 || choice > 6) {
+        cout << "Invalid choice!" << endl;
+        return;
+    }
+
+    // Spend stat points on the chosen stat
+    int* stat = nullptr;
+    switch (choice) {
+        case 1: stat = &strength; break;
+        case 2: stat = &dex; break;
+        case 3: stat = &constit; break;
+        case 4: stat = &intel; break;
+        case 5: stat = &wisdom; break;
+        case 6: stat = &rizz; break;
+    }
+
+    // Spend the stat point and update the stat
+    if (statPoints > 0) {
+        (*stat)++;  // Increase the chosen stat by 1
+        statPoints--;  // Deduct one stat point
+        cout << "You increased your stat! Current value: " << *stat << endl;
     }
 }
 
-void spendStatPoints() {
-    while (statPoints > 0) {
-        cout << "\nYou have " << statPoints << " stat point(s) to spend." << endl;
-        cout << "Which stat would you like to increase?" << endl;
-        cout << "1. Strength\n2. Dexterity\n3. Constitution\n4. Intelligence\n5. Wisdom\n6. Charisma\n7. Cancel\n";
-        int choice;
-        cin >> choice;
 
-        switch (choice) {
-            case 1: strength++; break;
-            case 2: dex++; break;
-            case 3: constit++; break;
-            case 4: intel++; break;
-            case 5: wisdom++; break;
-            case 6: rizz++; break;
-            case 7: return;
-            default: cout << "Invalid choice. Try again.\n"; continue;
+
+void saveCharacter() {
+    ifstream statsFileRead("character_stats.txt");
+    if (!statsFileRead) {
+        cerr << "Error opening stats file for reading!" << endl;
+        return;
+    }
+
+    stringstream updatedStatsFileContent;
+    string line;
+    bool foundPlayer = false;
+
+    while (getline(statsFileRead, line)) {
+        stringstream ss(line);
+        string storedName, storedClass, encryptedStats;
+        ss >> storedName >> storedClass >> encryptedStats;
+
+        // Update the player's stats if their name matches
+        if (storedName == currentPlayer) {
+            string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
+                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz);
+
+            string encryptedUpdatedStats = encryptStats(updatedStats);
+            updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << " "
+                                    << experience << " " << level << " " << statPoints << " " << lastProficiencyBonus << endl;
+            foundPlayer = true;
+        } else {
+            updatedStatsFileContent << line << endl;
         }
-        statPoints--;
-        cout << "Stat increased! Remaining points: " << statPoints << endl;
+    }
+
+    statsFileRead.close();
+
+    if (foundPlayer) {
+        ofstream updatedStatsFile("character_stats.txt", ios::trunc); // Use trunc to overwrite
+        if (!updatedStatsFile) {
+            cerr << "Error opening stats file for writing!" << endl;
+            return;
+        }
+        updatedStatsFile << updatedStatsFileContent.str();
+        updatedStatsFile.close();
+    } else {
+        cerr << "Player not found in stats file!" << endl;
+    }
+}
+
+
+
+void overwriteCharacterData() {
+    // Open the file to read and write
+    ifstream statsFile("character_stats.txt");
+    if (!statsFile) {
+        cerr << "Error opening stats file for reading!" << endl;
+        return;
+    }
+
+    stringstream updatedStatsFileContent;
+    string line;
+    bool foundPlayer = false;
+
+    // Read each line and look for the player's name
+    while (getline(statsFile, line)) {
+        stringstream ss(line);
+        string storedName, storedClass, encryptedStats;
+        ss >> storedName >> storedClass >> encryptedStats;
+
+        if (storedName == currentPlayer) {
+            // Update this player's stats
+            string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
+                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz);
+
+            // Encrypt the stats
+            string encryptedUpdatedStats = encryptStats(updatedStats);
+            updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << endl;
+            foundPlayer = true;
+        } else {
+            updatedStatsFileContent << line << endl; // Copy other players' data as is
+        }
+    }
+
+    statsFile.close();
+
+    // If the player was found and updated, overwrite the file
+    if (foundPlayer) {
+        ofstream updatedStatsFile("character_stats.txt", ios::trunc);
+        if (!updatedStatsFile) {
+            cerr << "Error opening stats file for writing!" << endl;
+            return;
+        }
+        updatedStatsFile << updatedStatsFileContent.str();
+        updatedStatsFile.close();
+    } else {
+        cerr << "Player not found in stats file!" << endl;
     }
 }
 

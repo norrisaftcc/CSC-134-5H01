@@ -14,7 +14,6 @@
 #include "dnd.h"
 using namespace std;
 
-
 void main_menu();
 void main_menu_fake();
 void choice_front_door();
@@ -23,6 +22,7 @@ void choice_go_home();
 void choice_food();
 void choice_bed();
 void choice_break_in();
+void experiencePoints(int xpGained);
 void save_progress(int choice);
 void displayCharacterAction();
 void battleWithEnemy(const std::string& currentClass, int& strength, const std::string& enemy);
@@ -176,12 +176,16 @@ void main_menu() {
 
 void displayCharacterAction(){
   displayCharacter();
-  cout << "Any Key: Go back" << endl;
+  cout << "Any Key: Go back \n" << endl;
+  cout << "2: Spend Points \n" << endl;
   int choice;
   cin >> choice;
   switch (choice){
     case 1:
       main_menu();
+      break;
+    case 2:
+      spendStatPoints();
       break;
     default:
     main_menu();
@@ -405,6 +409,7 @@ void experiencePoints(int xpGained) {
   int newLevel = level;
   int newProfBonus = 0;
 
+  // Check for level-up and set new level
   for (int i = 19; i >= 0; --i) {
       if (experience >= levelTable[i].xpThreshold) {
           newLevel = levelTable[i].level;
@@ -414,14 +419,31 @@ void experiencePoints(int xpGained) {
   }
 
   if (newLevel > level) {
+      // Level up logic
+      int oldProfBonus = getProficiencyBonus();
       level = newLevel;
+      int updatedProfBonus = getProficiencyBonus();
+      
+      int pointsEarned = updatedProfBonus - oldProfBonus;
+      if (pointsEarned > 0) {
+          proficiencyPoints += pointsEarned;
+          cout << "You've earned " << pointsEarned << " Proficiency Point(s) to spend!" << endl;
+      }
+
       cout << "Level Up! You are now Level " << level << "!" << endl;
   }
 
+  // Update current XP display
   int nextLevelXP = (level < 20) ? levelTable[level].xpThreshold : levelTable[19].xpThreshold;
   cout << "Current XP: " << experience << " / " << nextLevelXP << " (Level " << level << ")" << endl;
   cout << "Proficiency Bonus: +" << newProfBonus << endl;
+
+  // Subtract XP once the level-up occurs (to prevent level-up from happening too many times)
+  if (experience >= levelTable[level - 1].xpThreshold) {
+      experience -= levelTable[level - 1].xpThreshold;
+  }
 }
+
 
 int getProficiencyBonus() {
   if (level >= 1 && level <= 4) return 2;
