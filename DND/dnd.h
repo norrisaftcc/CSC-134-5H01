@@ -193,7 +193,7 @@ void displayCharacter() {
     cout << "Wisdom: " << wisdom << endl;
     cout << "Charisma: " << rizz << endl;
     cout << "" << endl;
-    cout << "Level: " << level << " | XP: " << experience << " | Proficiency Bonus: +" << getProficiencyBonus() << endl;
+    cout << "Level: " << level << " | XP: " << experience << endl;
     cout << "Unspent Stat Points: " << statPoints << endl;
     cout << "" << endl;
 }
@@ -483,6 +483,7 @@ void spendStatPoints() {
         (*stat)++;  // Increase the chosen stat by 1
         statPoints--;  // Deduct one stat point
         cout << "You increased your stat! Current value: " << *stat << endl;
+        saveCharacter();
     }
 }
 

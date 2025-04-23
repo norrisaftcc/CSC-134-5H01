@@ -419,16 +419,8 @@ void experiencePoints(int xpGained) {
   }
 
   if (newLevel > level) {
-      // Level up logic
-      int oldProfBonus = getProficiencyBonus();
       level = newLevel;
-      int updatedProfBonus = getProficiencyBonus();
       
-      int pointsEarned = updatedProfBonus - oldProfBonus;
-      if (pointsEarned > 0) {
-          proficiencyPoints += pointsEarned;
-          cout << "You've earned " << pointsEarned << " Proficiency Point(s) to spend!" << endl;
-      }
 
       cout << "Level Up! You are now Level " << level << "!" << endl;
   }
@@ -436,21 +428,12 @@ void experiencePoints(int xpGained) {
   // Update current XP display
   int nextLevelXP = (level < 20) ? levelTable[level].xpThreshold : levelTable[19].xpThreshold;
   cout << "Current XP: " << experience << " / " << nextLevelXP << " (Level " << level << ")" << endl;
-  cout << "Proficiency Bonus: +" << newProfBonus << endl;
 
   // Subtract XP once the level-up occurs (to prevent level-up from happening too many times)
   if (experience >= levelTable[level - 1].xpThreshold) {
       experience -= levelTable[level - 1].xpThreshold;
   }
-}
-
-
-int getProficiencyBonus() {
-  if (level >= 1 && level <= 4) return 2;
-  else if (level <= 8) return 3;
-  else if (level <= 12) return 4;
-  else if (level <= 16) return 5;
-  else return 6;
+  saveCharacter();
 }
 
 
