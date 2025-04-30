@@ -45,6 +45,8 @@ string hashPassword(const string &password);
 bool checkPassword(const string &username, const string &password);
 int getProficiencyBonus();
 
+/* -------------------------------------------------------------------------- */
+//SECTION                         Encryption and Decryption                         */
 // XOR encryption/decryption function
 string encryptDecrypt(const string &input, const string &key) {
     string output = input;
@@ -108,6 +110,17 @@ bool checkPassword(const string &username, const string &password) {
     return false;  // Password didn't match
 }
 
+//!SECTION -------------------------------------------------------------------------- */
+
+
+
+
+
+
+/* -------------------------------------------------------------------------- */
+//SECTION                             Character Creation                             */
+
+
 void characterCreation() {
     srand(seed);
     int classChoice;
@@ -159,7 +172,7 @@ void characterCreation() {
 
     // Concatenate stats into a single string before encryption
     string stats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
-                   to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz);
+        to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + "Level: " + to_string(level) + " " + to_string(experience);
 
     // Encrypt the stats
     string encryptedStats = encryptStats(stats);
@@ -176,8 +189,9 @@ void characterCreation() {
     cout << "Files written successfully!" << endl;
 }
 
+//NOTE - Display Character
+
 void displayCharacter() {
-    updateLevel();  // Always check level & bonus
     if (statPoints > 0) {
         spendStatPoints();  // Prompt user to spend points if they have any
     }
@@ -197,6 +211,8 @@ void displayCharacter() {
     cout << "Unspent Stat Points: " << statPoints << endl;
     cout << "" << endl;
 }
+
+//NOTE - Character initial stats
 
 void inputStats() {
     cout << "Rolling your character..." << endl;
@@ -263,6 +279,8 @@ string chooseClass() {
     return currentClass;
 }
 
+//NOTE - NEW PLAYER
+
 int newPlayer() {
     string name2;
     bool newPlayerCheck = true;
@@ -285,7 +303,7 @@ int newPlayer() {
         // Decrypt the stats
         string decryptedStats = decryptStats(encryptedStats);
         stringstream ssDecrypted(decryptedStats);
-        ssDecrypted >> strength >> dex >> constit >> intel >> wisdom >> rizz;
+        ssDecrypted >> strength >> dex >> constit >> intel >> wisdom >> rizz >> level >> experience;
 
         // Check if the current player's name matches the input name
         if (currentPlayer == name2) {
@@ -389,7 +407,7 @@ int newPlayer() {
     return newPlayerCheck;
 }
 
-
+//NOTE - Load Progress
 
 int load_progress() {
     ifstream progressFile("player_progress.txt");
@@ -411,6 +429,18 @@ int load_progress() {
     return lastChoice;
 }
 
+//!SECTION -------------------------------------------------------------------------- */
+
+
+
+
+
+
+
+
+
+// -------------------------------------------------------------------------- */
+//SECTION                                    Level                                   */
 void updateLevel() {
     int oldLevel = level;
 
@@ -425,6 +455,7 @@ void updateLevel() {
     for (int i = 19; i >= 0; --i) {
         if (experience >= xpThresholds[i]) {
             level = i + 1;
+            saveCharacter();
             break;
         }
     }
@@ -434,7 +465,7 @@ void updateLevel() {
     statPoints += statPointsAdded;  // Increase the stat points
 
     // Notify player about the stat points added
-    if (statPointsAdded > 0) {
+    if (statPointsAdded > 0 && oldLevel > level) {
         cout << "\n🆙 You've leveled up to Level " << level << "!" << endl;
         cout << "🎁 You received " << statPointsAdded << " stat point(s)!" << endl;
     }
@@ -487,14 +518,24 @@ void spendStatPoints() {
     }
 }
 
+//!SECTION -------------------------------------------------------------------------- */
 
+
+
+
+
+
+
+
+/* -------------------------------------------------------------------------- */
+//SECTION                              Character Saving                              */
 
 void saveCharacter() {
     ifstream statsFileRead("character_stats.txt");
     if (!statsFileRead) {
         cerr << "Error opening stats file for reading!" << endl;
         return;
-    }
+    } //Open Character Stats
 
     stringstream updatedStatsFileContent;
     string line;
@@ -511,11 +552,10 @@ void saveCharacter() {
                                   to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + "Level: " + to_string(level) + " " + to_string(experience);
 
             string encryptedUpdatedStats = encryptStats(updatedStats);
-            updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << " "
-                                    << experience << " " << level << " " << statPoints << " " << lastProficiencyBonus << endl;
-            foundPlayer = true;
+            updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << endl;
+            foundPlayer = true; //Update Character with new stats
         } else {
-            updatedStatsFileContent << line << endl;
+            updatedStatsFileContent << line << endl; //Populates file on  new occurance
         }
     }
 
@@ -557,7 +597,7 @@ void overwriteCharacterData() {
         if (storedName == currentPlayer) {
             // Update this player's stats
             string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
-                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz);
+                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + "Level: " + to_string(level) + " " + to_string(experience);
 
             // Encrypt the stats
             string encryptedUpdatedStats = encryptStats(updatedStats);
@@ -584,7 +624,7 @@ void overwriteCharacterData() {
     }
 }
 
-
+//!SECTION -------------------------------------------------------------------------- */
 
 
 #endif // DND_H

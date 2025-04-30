@@ -27,11 +27,15 @@ void save_progress(int choice);
 void displayCharacterAction();
 void battleWithEnemy(const std::string& currentClass, int& strength, const std::string& enemy);
 
+//NOTE - struct LevelData
+
 struct LevelData {
   int level;
   int xpThreshold;
   int proficiencyBonus;
 };
+
+//NOTE - LevelData LevelTable
 
 const LevelData levelTable[] = {
   {1, 0, 2},
@@ -56,6 +60,8 @@ const LevelData levelTable[] = {
   {20, 355000, 6}
 };
 
+
+//SECTION Main Game Loop
 
 void main_menu() {
   static bool firstLoad = true;  // Tracks whether this is the first time loading progress
@@ -139,6 +145,7 @@ void main_menu() {
   int choice;
   cin >> choice;
   save_progress(choice); // Save progress at this step
+  saveCharacter();
 
   switch (choice) {
       case 1:
@@ -176,6 +183,7 @@ void main_menu() {
 
 void displayCharacterAction(){
   displayCharacter();
+  saveCharacter();
   cout << "Any Key: Go back \n" << endl;
   cout << "2: Spend Points \n" << endl;
   int choice;
@@ -277,14 +285,24 @@ void choice_break_in(){
   string enemy = "Door";
   
   battleWithEnemy(currentClass, strength, enemy);
-
+  saveCharacter();
 }
 
 void battle_victory_doorHouse(){
   cout << "You gain 500 XP!" << endl;
   experiencePoints(500);
+  updateLevel();
+  saveCharacter();
   main_menu();
 }
+
+//!SECTION
+
+
+
+
+
+//NOTE - Save Progress
 
 void save_progress(int choice) {
   if (currentPlayer.empty()) {
@@ -319,6 +337,8 @@ void save_progress(int choice) {
       cerr << "Error: Unable to save progress!" << endl;
   }
 }
+
+//NOTE - Enemy Battle
 
 void battleWithEnemy(const std::string& currentClass, int& strength, const std::string& enemy) {
   srand(time(0));
@@ -401,6 +421,8 @@ void battleWithEnemy(const std::string& currentClass, int& strength, const std::
     }
   }
 }
+
+//NOTE - Experience
 
 void experiencePoints(int xpGained) {
   cout << "You gain " << xpGained << " XP!" << endl;
