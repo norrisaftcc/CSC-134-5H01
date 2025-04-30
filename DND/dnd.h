@@ -508,7 +508,7 @@ void saveCharacter() {
         // Update the player's stats if their name matches
         if (storedName == currentPlayer) {
             string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
-                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz);
+                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + "Level: " + to_string(level) + " " + to_string(experience);
 
             string encryptedUpdatedStats = encryptStats(updatedStats);
             updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << " "

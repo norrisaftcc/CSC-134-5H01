@@ -20,5 +20,6 @@ int main() {
         displayCharacter();
     }
 
+    saveCharacter();
     main_menu();
 }
