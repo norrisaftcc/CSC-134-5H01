@@ -289,7 +289,6 @@ void choice_break_in(){
 }
 
 void battle_victory_doorHouse(){
-  cout << "You gain 500 XP!" << endl;
   experiencePoints(500);
   updateLevel();
   saveCharacter();
@@ -445,6 +444,7 @@ void experiencePoints(int xpGained) {
       
 
       cout << "Level Up! You are now Level " << level << "!" << endl;
+      saveCharacter();
   }
 
   // Update current XP display
@@ -455,7 +455,6 @@ void experiencePoints(int xpGained) {
   if (experience >= levelTable[level - 1].xpThreshold) {
       experience -= levelTable[level - 1].xpThreshold;
   }
-  saveCharacter();
 }
 
 

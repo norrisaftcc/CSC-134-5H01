@@ -16,7 +16,8 @@ using namespace std;
 const int SIDES = 6;
 int seed = time(0);
 int roll;
-int experience = 0, maxExperience;
+static int experience = 0;
+//int maxExperience;
 string currentPlayer, currentClass;
 int level, hp, strength, constit, dex, intel, wisdom, rizz;
 bool newPlayerCheck;
@@ -470,6 +471,28 @@ void updateLevel() {
         cout << "🎁 You received " << statPointsAdded << " stat point(s)!" << endl;
     }
 
+    stringstream updatedStatsFileContent;
+    string line;
+    bool foundPlayer = false;
+
+    ifstream statsFileRead("character_stats.txt");
+    while (getline(statsFileRead, line)) {
+        stringstream ss(line);
+        string storedName, storedClass, encryptedStats;
+        ss >> storedName >> storedClass >> encryptedStats;
+
+        // Update the player's stats if their name matches
+        if (storedName == currentPlayer) {
+            string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
+                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + " " + to_string(level) + " " + to_string(experience);
+
+            string encryptedUpdatedStats = encryptStats(updatedStats);
+            updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << endl;
+            foundPlayer = true; //Update Character with new stats
+        } else {
+            updatedStatsFileContent << line << endl; //Populates file on  new occurance
+        }
+    }
     // Additional level-up actions like learning new abilities can be placed here
 }
 
@@ -549,7 +572,7 @@ void saveCharacter() {
         // Update the player's stats if their name matches
         if (storedName == currentPlayer) {
             string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
-                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + "Level: " + to_string(level) + " " + to_string(experience);
+                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + " " + to_string(level) + " " + to_string(experience);
 
             string encryptedUpdatedStats = encryptStats(updatedStats);
             updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << endl;
