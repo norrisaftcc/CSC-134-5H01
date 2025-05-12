@@ -1,0 +1,7 @@
+TestCleric C
+TestDwarf BXTTmCTR@U
+TestElf C
+TestMage C
+TestThief C
+TestWarrior C
+Warrior C
