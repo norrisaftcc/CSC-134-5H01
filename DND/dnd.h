@@ -314,6 +314,9 @@ int newPlayer() {
             return -1;
         }
 
+        // Calculate stat points based on level (one per level above 1)
+        statPoints = level - 1;
+
         // Check if the current player's name matches the input name
         if (currentPlayer == name2) {
             newPlayerCheck = false; // Player found, stop the loop

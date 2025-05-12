@@ -65,8 +65,20 @@ void createSamplePlayer(const string& playerName, const string& playerClass, int
     passwordFile << currentPlayer << " " << encryptedPassword << endl;
     passwordFile.close();
     
-    // Save the character stats
-    saveCharacter();
+    // Save the character stats - directly write to the file
+    string statsStr = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
+                     to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + " " +
+                     to_string(level) + " " + to_string(experience);
+    string encryptedStats = encryptStats(statsStr);
+
+    // Store the player stats in the character stats file
+    ofstream statsFile("character_stats.txt", ios::app);
+    if (!statsFile) {
+        cerr << "Error opening stats file for writing!" << endl;
+        return;
+    }
+    statsFile << currentPlayer << " " << currentClass << " " << encryptedStats << endl;
+    statsFile.close();
     
     // Save initial progress (position 0)
     save_progress(0);
