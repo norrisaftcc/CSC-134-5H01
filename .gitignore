@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+**/.claude/settings.local.json
+
+# DND game data files
+DND/character_stats.txt
+DND/passwords.txt
+DND/player_progress.txt
+DND/test_dnd

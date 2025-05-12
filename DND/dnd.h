@@ -13,6 +13,9 @@
 #include <cctype>
 using namespace std;
 
+// Global flag to control file saving (default: true = enabled)
+static bool enableSaving = true;
+
 const int SIDES = 6;
 int seed = time(0);
 int roll;
@@ -578,6 +581,11 @@ void spendStatPoints() {
 //SECTION                              Character Saving                              */
 
 void saveCharacter() {
+    // Skip saving if disabled
+    if (!enableSaving) {
+        return;
+    }
+
     ifstream statsFileRead("character_stats.txt");
     if (!statsFileRead) {
         cerr << "Error opening stats file for reading!" << endl;
@@ -624,6 +632,11 @@ void saveCharacter() {
 
 
 void overwriteCharacterData() {
+    // Skip saving if disabled
+    if (!enableSaving) {
+        return;
+    }
+
     // Open the file to read and write
     ifstream statsFile("character_stats.txt");
     if (!statsFile) {

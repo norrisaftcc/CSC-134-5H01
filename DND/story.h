@@ -309,6 +309,11 @@ void battle_victory_doorHouse(){
 //NOTE - Save Progress
 
 void save_progress(int choice) {
+  // Skip saving if disabled
+  if (!enableSaving) {
+      return;
+  }
+
   if (currentPlayer.empty()) {
       cerr << "Error: No player name found. Progress not saved!" << endl;
       return;
