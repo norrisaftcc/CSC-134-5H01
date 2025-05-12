@@ -115,19 +115,24 @@ void main_menu() {
     cout << "Since you're a magic-user it gives you the immense power of abilites but you're weaker in health and physical combat." << endl;
   }
   else if (currentClass == "Thief"){
-      emoji = "Since you're a thief you're good at stealth and are really agile, but you're strength is weaker than most.";
+      emoji = "🗡️";
+      cout << "Since you're a thief you're good at stealth and are really agile, but you're strength is weaker than most." << endl;
   }
   else if (currentClass == "Cleric"){
-      emoji = "Since you're a cleric you are given the ability to heal people, and connect with nature. This comes with weaker health, but you have things to counteract that";
+      emoji = "💉";
+      cout << "Since you're a cleric you are given the ability to heal people, and connect with nature. This comes with weaker health, but you have things to counteract that." << endl;
   }
   else if (currentClass == "Elf"){
-      emoji = "Since you're an elf you're good with bows and arrows, but you're more frail.";
+      emoji = "🏹";
+      cout << "Since you're an elf you're good with bows and arrows, but you're more frail." << endl;
   }
   else if (currentClass == "Dwarf"){
-      emoji = "Since you're a dwarf you're stronger and you have the ability to make armor more powerful!";
+      emoji = "🔨";
+      cout << "Since you're a dwarf you're stronger and you have the ability to make armor more powerful!" << endl;
   }
   else if (currentClass == "Halfling"){
-      emoji = "Since you're a halfling you're a master with the spear.";
+      emoji = "🔱";
+      cout << "Since you're a halfling you're a master with the spear." << endl;
   }
   cout << "========================================" << endl;
   cout << emoji << "  : " << currentPlayer << " the " << currentClass << endl;
@@ -427,6 +432,7 @@ void experiencePoints(int xpGained) {
   cout << "You gain " << xpGained << " XP!" << endl;
   experience += xpGained;
 
+  int oldLevel = level;
   int newLevel = level;
   int newProfBonus = 0;
 
@@ -439,11 +445,14 @@ void experiencePoints(int xpGained) {
       }
   }
 
-  if (newLevel > level) {
+  if (newLevel > oldLevel) {
       level = newLevel;
-      
+      // Calculate stat points to add (1 per level gained)
+      int statPointsAdded = level - oldLevel;
+      statPoints += statPointsAdded;
 
-      cout << "Level Up! You are now Level " << level << "!" << endl;
+      cout << "\n🆙 Level Up! You are now Level " << level << "!" << endl;
+      cout << "🎁 You received " << statPointsAdded << " stat point(s)!" << endl;
       saveCharacter();
   }
 
@@ -451,10 +460,8 @@ void experiencePoints(int xpGained) {
   int nextLevelXP = (level < 20) ? levelTable[level].xpThreshold : levelTable[19].xpThreshold;
   cout << "Current XP: " << experience << " / " << nextLevelXP << " (Level " << level << ")" << endl;
 
-  // Subtract XP once the level-up occurs (to prevent level-up from happening too many times)
-  if (experience >= levelTable[level - 1].xpThreshold) {
-      experience -= levelTable[level - 1].xpThreshold;
-  }
+  // IMPORTANT: DO NOT reset experience after leveling up
+  // We need to keep the total XP for proper progression through levels
 }
 
 

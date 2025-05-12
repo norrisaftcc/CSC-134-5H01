@@ -173,7 +173,7 @@ void characterCreation() {
 
     // Concatenate stats into a single string before encryption
     string stats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
-        to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + "Level: " + to_string(level) + " " + to_string(experience);
+        to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + " " + to_string(level) + " " + to_string(experience);
 
     // Encrypt the stats
     string encryptedStats = encryptStats(stats);
@@ -304,7 +304,12 @@ int newPlayer() {
         // Decrypt the stats
         string decryptedStats = decryptStats(encryptedStats);
         stringstream ssDecrypted(decryptedStats);
-        ssDecrypted >> strength >> dex >> constit >> intel >> wisdom >> rizz >> level >> experience;
+
+        // Parse the stats with proper error handling
+        if (!(ssDecrypted >> strength >> dex >> constit >> intel >> wisdom >> rizz >> level >> experience)) {
+            cerr << "Error parsing character stats for " << currentPlayer << "!" << endl;
+            return -1;
+        }
 
         // Check if the current player's name matches the input name
         if (currentPlayer == name2) {
@@ -456,7 +461,6 @@ void updateLevel() {
     for (int i = 19; i >= 0; --i) {
         if (experience >= xpThresholds[i]) {
             level = i + 1;
-            saveCharacter();
             break;
         }
     }
@@ -466,31 +470,51 @@ void updateLevel() {
     statPoints += statPointsAdded;  // Increase the stat points
 
     // Notify player about the stat points added
-    if (statPointsAdded > 0 && oldLevel > level) {
+    if (statPointsAdded > 0 && level > oldLevel) { // Fixed condition: check if NEW level > OLD level
         cout << "\n🆙 You've leveled up to Level " << level << "!" << endl;
         cout << "🎁 You received " << statPointsAdded << " stat point(s)!" << endl;
     }
 
-    stringstream updatedStatsFileContent;
-    string line;
-    bool foundPlayer = false;
+    // Save the updated character stats to file
+    if (level != oldLevel) {
+        stringstream updatedStatsFileContent;
+        string line;
+        bool foundPlayer = false;
 
-    ifstream statsFileRead("character_stats.txt");
-    while (getline(statsFileRead, line)) {
-        stringstream ss(line);
-        string storedName, storedClass, encryptedStats;
-        ss >> storedName >> storedClass >> encryptedStats;
+        ifstream statsFileRead("character_stats.txt");
+        if (statsFileRead) {
+            while (getline(statsFileRead, line)) {
+                stringstream ss(line);
+                string storedName, storedClass, encryptedStats;
+                ss >> storedName >> storedClass >> encryptedStats;
 
-        // Update the player's stats if their name matches
-        if (storedName == currentPlayer) {
-            string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
-                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + " " + to_string(level) + " " + to_string(experience);
+                // Update the player's stats if their name matches
+                if (storedName == currentPlayer) {
+                    string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
+                                          to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + " " +
+                                          to_string(level) + " " + to_string(experience);
 
-            string encryptedUpdatedStats = encryptStats(updatedStats);
-            updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << endl;
-            foundPlayer = true; //Update Character with new stats
+                    string encryptedUpdatedStats = encryptStats(updatedStats);
+                    updatedStatsFileContent << storedName << " " << storedClass << " " << encryptedUpdatedStats << endl;
+                    foundPlayer = true; //Update Character with new stats
+                } else {
+                    updatedStatsFileContent << line << endl; //Populates file on new occurrence
+                }
+            }
+            statsFileRead.close();
+
+            // Write the updated content back to the file
+            if (foundPlayer) {
+                ofstream statsFileWrite("character_stats.txt", ios::trunc);
+                if (statsFileWrite) {
+                    statsFileWrite << updatedStatsFileContent.str();
+                    statsFileWrite.close();
+                } else {
+                    cerr << "Error opening stats file for writing!" << endl;
+                }
+            }
         } else {
-            updatedStatsFileContent << line << endl; //Populates file on  new occurance
+            cerr << "Error opening stats file for reading!" << endl;
         }
     }
     // Additional level-up actions like learning new abilities can be placed here
@@ -620,7 +644,7 @@ void overwriteCharacterData() {
         if (storedName == currentPlayer) {
             // Update this player's stats
             string updatedStats = to_string(strength) + " " + to_string(dex) + " " + to_string(constit) + " " +
-                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + "Level: " + to_string(level) + " " + to_string(experience);
+                                  to_string(intel) + " " + to_string(wisdom) + " " + to_string(rizz) + " " + to_string(level) + " " + to_string(experience);
 
             // Encrypt the stats
             string encryptedUpdatedStats = encryptStats(updatedStats);
